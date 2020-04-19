@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: blu_spark_makiras_modified_sable.zip
-        path: ~/AnyKernel/
+        path: /home/runner/AnyKernel/blu_spark_makiras_modified_sable.zip
 
   build-extreme:
     runs-on: ubuntu-18.04
@@ -57,5 +57,5 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: blu_spark_makiras_modified_extreme.zip
-        path: ~/AnyKernel/
+        path: /home/runner/AnyKernel/blu_spark_makiras_modified_extreme.zip
 
