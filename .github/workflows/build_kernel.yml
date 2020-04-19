@@ -5,7 +5,7 @@ on:
       - makiras
 
 jobs:
-  build stable:
+  build-stable:
     runs-on: ubuntu-18.04
     steps:
     - name: Init Repo
@@ -28,7 +28,7 @@ jobs:
         name: blu_spark_makiras_modified_sable.zip
         path: AnyKernel/
 
-  build extreme:
+  build-extreme:
     runs-on: ubuntu-18.04
     steps:
     - name: Init Repo
