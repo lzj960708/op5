@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - name: Init Repo
-      run: git clone https://github.com/Makiras/op5.git -b makiras --depth=1 
+      run: |
+        cd ~
+        git clone https://github.com/Makiras/op5.git -b makiras --depth=1 
     - name: Build With Shell
       run: |
         cd op5
@@ -26,19 +28,22 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: blu_spark_makiras_modified_sable.zip
-        path: AnyKernel/
+        path: ~/op5/AnyKernel/
 
   build-extreme:
     runs-on: ubuntu-18.04
     steps:
     - name: Init Repo
-      run: git clone https://github.com/Makiras/op5.git -b makiras --depth=1 
+      run: |
+        cd ~
+        git clone https://github.com/Makiras/op5.git -b makiras --depth=1 
     - name: Get extreme
       run: |
-        cd op5
+        cd ~/op5
         sed -i -e 's/-O2/-O3/' Makefile 
     - name: Build With Shell
       run: |
+        cd ~/op5
         bash build_full.sh
     - name: Package With AnyKernel
       run: |
@@ -52,5 +57,5 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: blu_spark_makiras_modified_extreme.zip
-        path: AnyKernel/
+        path: ~/op5/AnyKernel/
 

@@ -92,6 +92,29 @@ module_param(backlight_min, int, 0644);
 static struct fb_info *fbi_list[MAX_FBI_LIST];
 static int fbi_list_index;
 
+static ssize_t mdss_fb_fake_get(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	int ret = 0;
+	int level = 0;
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
+	return ret;
+}
+
+static ssize_t mdss_fb_fake_set(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	int rc = 0;
+	int level = 0;
+
+	rc = kstrtoint(buf, 10, &level);
+	if (rc) {
+		pr_err("kstrtoint failed. rc=%d\n", rc);
+		return rc;
+	}
+	return count;
+}
+
 static u32 mdss_fb_pseudo_palette[16] = {
 	0x00000000, 0xffffffff, 0xffffffff, 0xffffffff,
 	0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff,
@@ -297,7 +320,7 @@ static void mdss_fb_set_bl_brightness(struct led_classdev *led_cdev,
 	// Boeffla: apply min limits for LCD backlight (0 is exception for display off)
 	if (value != 0 && value < backlight_min)
 		value = backlight_min;
-
+		
 	/* This maps android backlight level 0 to 255 into
 	   driver backlight level 0 to bl_max with rounding */
 	MDSS_BRIGHT_TO_BL(bl_lvl, value, mfd->panel_info->bl_max,
@@ -911,9 +934,7 @@ static ssize_t mdss_fb_get_hbm_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd, MDSS_EVENT_PANEL_GET_HBM_MODE,
 			NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "HBM mode = %d\n"
-	                                        "0-->HBM OFF\n"
-					                        "1-->HBM ON\n", level);
+	ret = scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -951,10 +972,7 @@ static ssize_t mdss_fb_get_srgb_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd, MDSS_EVENT_PANEL_GET_SRGB_MODE,
 			NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "mode = %d\n"
-							"0-->sRGB Mode OFF\n"
-							"1-->sRGB Mode ON\n",
-							level);
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -980,6 +998,9 @@ static ssize_t mdss_fb_set_srgb_mode(struct device *dev,
 }
 
 static DEVICE_ATTR(SRGB, S_IRUGO | S_IWUSR,
+	mdss_fb_fake_get, mdss_fb_fake_set);
+
+static DEVICE_ATTR(srgb, S_IRUGO | S_IWUSR,
 	mdss_fb_get_srgb_mode, mdss_fb_set_srgb_mode);
 
 
@@ -993,10 +1014,7 @@ static ssize_t mdss_fb_get_adobe_rgb_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd,
 		MDSS_EVENT_PANEL_GET_ADOBE_RGB_MODE, NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "mode = %d\n"
-					"0-->Adobe RGB Mode OFF\n"
-					"1-->Adobe RGB Mode ON\n",
-					level);
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -1022,6 +1040,9 @@ static ssize_t mdss_fb_set_adobe_rgb_mode(struct device *dev,
 }
 
 static DEVICE_ATTR(Adobe_RGB, S_IRUGO | S_IWUSR,
+	mdss_fb_fake_get, mdss_fb_fake_set);
+
+static DEVICE_ATTR(adobe_rgb, S_IRUGO | S_IWUSR,
 	mdss_fb_get_adobe_rgb_mode, mdss_fb_set_adobe_rgb_mode);
 
 static ssize_t mdss_fb_get_dci_p3_mode(struct device *dev,
@@ -1034,10 +1055,7 @@ static ssize_t mdss_fb_get_dci_p3_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd, MDSS_EVENT_PANEL_GET_DCI_P3_MODE,
 			NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "mode = %d\n"
-						"0-->DCI-P3 Mode OFF\n"
-						"1-->DCI-P3 Mode ON\n",
-						level);
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -1063,6 +1081,9 @@ static ssize_t mdss_fb_set_dci_p3_mode(struct device *dev,
 }
 
 static DEVICE_ATTR(DCI_P3, S_IRUGO | S_IWUSR,
+	mdss_fb_fake_get, mdss_fb_fake_set);
+
+static DEVICE_ATTR(dci_p3, S_IRUGO | S_IWUSR,
 	mdss_fb_get_dci_p3_mode, mdss_fb_set_dci_p3_mode);
 
 static ssize_t mdss_fb_get_night_mode(struct device *dev,
@@ -1075,10 +1096,7 @@ static ssize_t mdss_fb_get_night_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd, MDSS_EVENT_PANEL_GET_NIGHT_MODE,
 			NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "mode = %d\n"
-							"0-->Night Mode OFF\n"
-							"1-->Night Mode ON\n",
-							level);
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -1104,6 +1122,9 @@ static ssize_t mdss_fb_set_night_mode(struct device *dev,
 }
 
 static DEVICE_ATTR(night_mode, S_IRUGO | S_IWUSR,
+	mdss_fb_fake_get, mdss_fb_fake_set);
+
+static DEVICE_ATTR(night_mode_, S_IRUGO | S_IWUSR,
 	mdss_fb_get_night_mode, mdss_fb_set_night_mode);
 
 static ssize_t mdss_fb_get_oneplus_mode(struct device *dev,
@@ -1116,10 +1137,7 @@ static ssize_t mdss_fb_get_oneplus_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd, MDSS_EVENT_PANEL_GET_ONEPLUS_MODE,
 			NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "mode = %d\n"
-						"0-->Oneplus Mode OFF\n"
-						"1-->Oneplus Mode ON\n",
-						level);
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -1157,10 +1175,7 @@ static ssize_t mdss_fb_get_adaption_mode(struct device *dev,
 
 	level = mdss_fb_send_panel_event(mfd,
 		MDSS_EVENT_PANEL_GET_ADAPTION_MODE, NULL);
-	ret = scnprintf(buf, PAGE_SIZE, "mode = %d\n"
-						"0-->Adaption Mode OFF\n"
-						"1-->Adaption Mode ON\n",
-						level);
+	ret=scnprintf(buf, PAGE_SIZE, "%d\n", level);
 	return ret;
 }
 
@@ -1186,8 +1201,10 @@ static ssize_t mdss_fb_set_adaption_mode(struct device *dev,
 }
 
 static DEVICE_ATTR(adaption_mode, S_IRUGO | S_IWUSR,
-	mdss_fb_get_adaption_mode, mdss_fb_set_adaption_mode);
+	mdss_fb_fake_get, mdss_fb_fake_set);
 
+static DEVICE_ATTR(adaption_mode_, S_IRUGO | S_IWUSR,
+	mdss_fb_get_adaption_mode, mdss_fb_set_adaption_mode);
 /* #endif */
 
 
@@ -1255,10 +1272,13 @@ static struct attribute *mdss_fb_attrs[] = {
 	&dev_attr_SRGB.attr,
 	&dev_attr_hbm.attr,
 	&dev_attr_Adobe_RGB.attr,
-
 	&dev_attr_DCI_P3.attr,
-
+	&dev_attr_srgb.attr,
+	&dev_attr_adobe_rgb.attr,
+	&dev_attr_adaption_mode_.attr,
+	&dev_attr_dci_p3.attr,
 	&dev_attr_night_mode.attr,
+	&dev_attr_night_mode_.attr,
 	&dev_attr_adaption_mode.attr,
 	&dev_attr_oneplus_mode.attr,
 /* #endif */
@@ -2063,8 +2083,15 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 		} else {
 			if (mfd->bl_level != bkl_lvl)
 				bl_notify_needed = true;
+		#ifdef CONFIG_FLICKER_FREE
+			ff_mfd_copy = mfd;
+			ff_bkl_lvl_cpy = temp;
+			pr_debug("backlight sent to panel :%d\n", mdss_panel_calc_backlight(temp));
+			pdata->set_backlight(pdata, mdss_panel_calc_backlight(temp));
+		#else
 			pr_debug("backlight sent to panel :%d\n", temp);
 			pdata->set_backlight(pdata, temp);
+		#endif
 			mfd->bl_level = bkl_lvl;
 			mfd->bl_level_scaled = temp;
 		}
@@ -2076,6 +2103,17 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 				NOTIFY_TYPE_BL_UPDATE);
 	}
 }
+
+#ifdef CONFIG_FLICKER_FREE
+struct msm_fb_data_type *get_mfd_copy(void)
+{
+	return ff_mfd_copy;
+}
+
+u32 get_bkl_lvl(void){
+	return ff_bkl_lvl_cpy;
+}
+#endif
 
 void mdss_fb_update_backlight(struct msm_fb_data_type *mfd)
 {
@@ -2098,7 +2136,13 @@ void mdss_fb_update_backlight(struct msm_fb_data_type *mfd)
 				mdss_fb_bl_update_notify(mfd,
 					NOTIFY_TYPE_BL_AD_ATTEN_UPDATE);
 			mdss_fb_bl_update_notify(mfd, NOTIFY_TYPE_BL_UPDATE);
+		#ifdef CONFIG_FLICKER_FREE
+			ff_mfd_copy = mfd;
+			ff_bkl_lvl_cpy = temp;
+			pdata->set_backlight(pdata, mdss_panel_calc_backlight(temp));
+		#else
 			pdata->set_backlight(pdata, temp);
+		#endif
 			mfd->bl_level_scaled = mfd->unset_bl_level;
 			mfd->allow_bl_update = true;
 		}
@@ -4099,7 +4143,7 @@ static int __mdss_fb_display_thread(void *data)
 		ret = wait_event_interruptible(mfd->commit_wait_q,
 				(atomic_read(&mfd->commits_pending) ||
 				 kthread_should_stop()));
-
+				 
 		if (ret) {
 			pr_info("%s: interrupted", __func__);
 			continue;
