@@ -9,7 +9,7 @@
 #
 # Normal rules
 #
-.*
+.wireguard-fetch-lock
 *.o
 *.o.*
 *.a

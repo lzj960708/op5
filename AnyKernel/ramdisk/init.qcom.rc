@@ -1,0 +1,10 @@
+# (c) 2018-2019 changes for blu_spark by eng.stk
+
+on property:sys.post_boot.parsed=1
+    setprop vendor.post_boot.parsed 1
+
+on property:vendor.post_boot.parsed=1
+    exec u:r:magisk:s0 root root -- /init.blu_spark_boot.sh
+
+on charger
+    write /sys/class/leds/button-backlight/brightness 0

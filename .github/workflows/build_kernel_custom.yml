@@ -1,0 +1,61 @@
+name: Build Blu_Spark_Modified Kernel
+on:
+  push:
+    branches:    
+      - makiras_custom
+
+jobs:
+  build-stable:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Init Repo
+      run: |
+        cd ~
+        git clone https://github.com/Makiras/op5.git -b makiras_custom --depth=1 
+    - name: Build With Shell
+      run: |
+        cd ~/op5
+        bash build_full.sh
+    - name: Package With AnyKernel
+      run: |
+        cd ~
+        cp op5/AnyKernel ./ -r
+        cd AnyKernel/
+        cp ../op5/out/arch/arm64/boot/Image.gz-dtb  ./
+        zip -r blu_spark_makiras_custom_notOOS_stable.zip *
+
+    - name : Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: blu_spark_makiras_custom_notOOS_stable.zip
+        path: /home/runner/AnyKernel/blu_spark_makiras_custom_notOOS_stable.zip
+
+  build-extreme:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Init Repo
+      run: |
+        cd ~
+        git clone https://github.com/Makiras/op5.git -b makiras_custom --depth=1 
+    - name: Get extreme
+      run: |
+        cd ~/op5
+        sed -i -e 's/-O2/-O3/' Makefile 
+    - name: Build With Shell
+      run: |
+        cd ~/op5
+        bash build_full.sh
+    - name: Package With AnyKernel
+      run: |
+        cd ~
+        cp op5/AnyKernel ./ -r
+        cd AnyKernel/
+        cp ../op5/out/arch/arm64/boot/Image.gz-dtb  ./
+        zip -r blu_spark_makiras_custom_notOOS_extreme.zip *
+
+    - name : Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: blu_spark_makiras_custom_notOOS_extreme.zip
+        path: /home/runner/AnyKernel/blu_spark_makiras_custom_notOOS_extreme.zip
+
