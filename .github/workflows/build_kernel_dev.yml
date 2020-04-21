@@ -1,8 +1,8 @@
-name: Build Kernel Others
+name: Build Kernel experimental
 on:
   push:
     branches:    
-      - makiras_custom
+      - makiras_dev
 
 jobs:
   build:
@@ -11,7 +11,11 @@ jobs:
     - name: Init Repo
       run: |
         cd ~
-        git clone https://github.com/Makiras/op5.git -b makiras_custom --depth=1 
+        git clone https://github.com/Makiras/op5.git -b makiras_dev --depth=1 
+    - name: Get extreme
+      run: |
+        cd ~/op5
+        sed -i -e 's/-O2/-Ofast/' Makefile 
     - name: Build With Shell
       run: |
         cd ~/op5
@@ -26,6 +30,6 @@ jobs:
     - name : Upload artifact
       uses: actions/upload-artifact@master
       with:
-        name: blu_spark_makiras_modified_notOOS.zip
+        name: blu_spark_makiras_modified_experiment.zip
         path: /home/runner/AnyKernel/
 
