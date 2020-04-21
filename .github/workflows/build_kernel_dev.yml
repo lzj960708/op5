@@ -1,4 +1,4 @@
-name: Build Blu_Spark_Modified Kernel experimental
+name: Build Kernel experimental
 on:
   push:
     branches:    

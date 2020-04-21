@@ -1,21 +1,17 @@
-name: Build Blu_Spark_Modified Kernel Others
+name: Build Kernel Others
 on:
   push:
     branches:    
-      - makiras
+      - makiras_custom
 
 jobs:
-  build-stable:
+  build:
     runs-on: ubuntu-18.04
     steps:
     - name: Init Repo
       run: |
         cd ~
         git clone https://github.com/Makiras/op5.git -b makiras_custom --depth=1 
-    - name: Get extreme
-      run: |
-        cd ~/op5
-        sed -i -e 's/-O2/-O3/' Makefile 
     - name: Build With Shell
       run: |
         cd ~/op5
