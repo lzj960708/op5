@@ -31,6 +31,42 @@
 
 static DEFINE_MUTEX(l2bw_lock);
 
+
+static unsigned long arg_cpu_max_c1 = 2035200;
+
+static int __init cpufreq_read_cpu_max_c1(char *cpu_max_c1)
+{
+	unsigned long ui_khz;
+	int ret;
+
+	ret = kstrtoul(cpu_max_c1, 0, &ui_khz);
+	if (ret)
+		return -EINVAL;
+
+	arg_cpu_max_c1 = ui_khz;
+	printk("cpu_max_c1=%lu\n", arg_cpu_max_c1);
+	return ret;
+}
+__setup("cpu_max_c1=", cpufreq_read_cpu_max_c1);
+
+static unsigned long arg_cpu_max_c2 = 2592000;
+
+static int __init cpufreq_read_cpu_max_c2(char *cpu_max_c2)
+{
+	unsigned long ui_khz;
+	int ret;
+
+	ret = kstrtoul(cpu_max_c2, 0, &ui_khz);
+	if (ret)
+		return -EINVAL;
+
+	arg_cpu_max_c2 = ui_khz;
+	printk("cpu_max_c2=%lu\n", arg_cpu_max_c2);
+	return ret;
+}
+__setup("cpu_max_c2=", cpufreq_read_cpu_max_c2);
+
+
 static struct clk *cpu_clk[NR_CPUS];
 static struct clk *l2_clk;
 static DEFINE_PER_CPU(struct cpufreq_frequency_table *, freq_table);
@@ -406,8 +442,9 @@ static struct cpufreq_frequency_table *cpufreq_parse_dt(struct device *dev,
 		if (j > 0 && f <= ftbl[j - 1].frequency)
 			continue;
 
-		if ((cpu < 4 && f > LITTLE_CPU_QOS_FREQ) ||
-			(cpu >= 4 && f > BIG_CPU_QOS_FREQ)) {
+		//Custom max freq
+		if ((cpu < 4 && f > arg_cpu_max_c1) ||
+				(cpu >= 4 && f > arg_cpu_max_c2)) {
 			nf = j;
 			break;
 		}
@@ -520,9 +557,9 @@ static struct platform_driver msm_cpufreq_plat_driver = {
 
 static int get_c0_available_cpufreq(void)
 {
-	unsigned int max_cpufreq_index = 0, min_cpufreq_index = 0;
-	unsigned int max_index = 0;
-	unsigned int index_max = 0, index_min = 0;
+	unsigned int max_cpufreq_index, min_cpufreq_index;
+	unsigned int max_index;
+	unsigned int index_max, index_min;
 	struct cpufreq_frequency_table *table, *pos;
 
       	table = cpufreq_frequency_get_table(0);
@@ -569,10 +606,10 @@ static int get_c0_available_cpufreq(void)
 
 static int get_c1_available_cpufreq(void)
 {
-	unsigned int max_cpufreq_index = 0, min_cpufreq_index = 0;
-	unsigned int max_index = 0;
-	unsigned int index_max = 0, index_min = 0;
-	struct cpufreq_frequency_table *table, *pos;
+        unsigned int max_cpufreq_index, min_cpufreq_index;
+        unsigned int max_index;
+        unsigned int index_max, index_min;
+        struct cpufreq_frequency_table *table, *pos;
 
 	table = cpufreq_frequency_get_table(cluster1_first_cpu);
 	if (!table) {
@@ -640,8 +677,8 @@ static int c0_cpufreq_qos_handler(struct notifier_block *b, unsigned long val, v
 	}
 
 	ret = get_c0_available_cpufreq();
-	if (ret) {
-		cpufreq_cpu_put(policy);
+	if (!ret) {
+        	cpufreq_cpu_put(policy);
 		return NOTIFY_BAD;
 	}
 
