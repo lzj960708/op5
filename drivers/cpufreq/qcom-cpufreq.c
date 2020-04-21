@@ -42,8 +42,8 @@ struct cpufreq_suspend_t {
 };
 
 static DEFINE_PER_CPU(struct cpufreq_suspend_t, suspend_data);
-#define LITTLE_CPU_QOS_FREQ 2035200
-#define BIG_CPU_QOS_FREQ    2592000
+#define LITTLE_CPU_QOS_FREQ 1900800
+#define BIG_CPU_QOS_FREQ    2361600
 
 unsigned int cluster1_first_cpu;
 static bool qos_cpufreq_flag;
@@ -405,12 +405,6 @@ static struct cpufreq_frequency_table *cpufreq_parse_dt(struct device *dev,
 		 */
 		if (j > 0 && f <= ftbl[j - 1].frequency)
 			continue;
-
-		if ((cpu < 4 && f > LITTLE_CPU_QOS_FREQ) ||
-			(cpu >= 4 && f > BIG_CPU_QOS_FREQ)) {
-			nf = j;
-			break;
-		}
 
 		ftbl[j].driver_data = j;
 		ftbl[j].frequency = f;
