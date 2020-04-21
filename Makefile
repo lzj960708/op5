@@ -404,7 +404,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -std=gnu89 $(call cc-option,-fno-PIE) -flto\
+		   -std=gnu89 $(call cc-option,-fno-PIE) -flto -fuse-linker-plugin\
 		   -mcpu=cortex-a73.cortex-a53 -mtune=cortex-a73.cortex-a53 -fdiagnostics-color=always -ftree-vectorize -pipe \
 		   -Wno-maybe-uninitialized -Wno-unused-variable -Wno-unused-function -Wno-unused-label \
 		   -Wno-memset-transposed-args -Wno-bool-compare -Wno-logical-not-parentheses -Wno-discarded-array-qualifiers \
