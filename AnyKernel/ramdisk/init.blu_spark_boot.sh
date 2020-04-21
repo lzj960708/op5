@@ -34,8 +34,12 @@ echo 0 > /sys/devices/system/cpu/cpu4/core_ctl/enable
 echo 1 > /sys/class/devfreq/5000000.qcom,kgsl-3d0/adrenoboost
 
 # Set min cpu freq
-echo 518400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-echo 806400 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+echo 300000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+echo 300000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+
+# Set max cpu freq
+echo 2035200 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo 2496000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
 # Configure cpu governor settings
 echo "blu_active" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
