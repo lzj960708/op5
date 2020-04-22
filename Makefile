@@ -305,8 +305,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast  -fomit-frame-pointer -std=gnu89 -pipe
-HOSTCXXFLAGS = -Ofast 
+HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O3  -fomit-frame-pointer -std=gnu89 -pipe
+HOSTCXXFLAGS = -O3 
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
 HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
@@ -656,9 +656,9 @@ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
 else
 ifdef CONFIG_PROFILE_ALL_BRANCHES
-KBUILD_CFLAGS	+= -Ofast
+KBUILD_CFLAGS	+= -O3
 else
-KBUILD_CFLAGS   += -Ofast
+KBUILD_CFLAGS   += -O3
 endif
 endif
 
